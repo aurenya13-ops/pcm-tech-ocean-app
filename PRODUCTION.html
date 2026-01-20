@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCM × Tech Ocean - Your JEE Learning Companion</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <style>
+    /* Loading Screen Styles */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      transition: opacity 0.5s ease;
+    }
+    
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .loading-content {
+      text-align: center;
+      color: white;
+    }
+    
+    .loading-logo {
+      font-size: 80px;
+      margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .loading-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .loading-subtitle {
+      font-size: 16px;
+      color: #94a3b8;
+      margin-bottom: 40px;
+    }
+    
+    .loading-bar {
+      width: 300px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 0 auto 20px;
+    }
+    
+    .loading-progress {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    
+    .loading-status {
+      font-size: 14px;
+      color: #64748b;
+      min-height: 20px;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-logo">🌊</div>
+      <h1 class="loading-title">PCM × Tech Ocean</h1>
+      <p class="loading-subtitle">Preparing your learning environment...</p>
+      <div class="loading-bar">
+        <div id="loading-progress" class="loading-progress"></div>
+      </div>
+      <div id="loading-status" class="loading-status">Initializing...</div>
+    </div>
+  </div>
+
+  <!-- Main App Container -->
+  <div id="app" class="app-container" style="display: none;">
+    
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">🌊</span>
+          <span class="logo-text">PCM Ocean</span>
+        </div>
+        <button class="menu-toggle" onclick="toggleSidebar()">
+          <span>☰</span>
+        </button>
+      </div>
+
+      <!-- Current Theme Display -->
+      <div class="theme-display glass-card" onclick="showThemeSelector()">
+        <div id="current-theme-preview" class="theme-preview"></div>
+        <div class="theme-info">
+          <div id="current-theme-name" class="theme-name">Ocean Depths</div>
+          <div id="current-theme-type" class="theme-type">calm</div>
+        </div>
+        <div class="theme-timer-container">
+          <div class="timer-label">Next theme in:</div>
+          <div id="theme-timer" class="theme-timer">47:59:59</div>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="nav-menu">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <div class="nav-item active" data-section="dashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Dashboard</span>
+          </div>
+          <div class="nav-item" data-section="game-levels">
+            <span class="nav-icon">🎮</span>
+            <span class="nav-label">Game Levels</span>
+          </div>
+          <div class="nav-item" data-section="music-ocean">
+            <span class="nav-icon">🎵</span>
+            <span class="nav-label">Music Ocean</span>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Deep Learning</div>
+          <div class="nav-item" data-section="pomodoro">
+            <span class="nav-icon">🍅</span>
+            <span class="nav-label">Pomodoro</span>
+          </div>
+          <div class="nav-item" data-section="feynman">
+            <span class="nav-icon">🧠</span>
+            <span class="nav-label">Feynman</span>
+          </div>
+          <div class="nav-item" data-section="spaced-repetition">
+            <span class="nav-icon">📅</span>
+            <span class="nav-label">Spaced Repetition</span>
+          </div>
+          <div class="nav-item" data-section="active-recall">
+            <span class="nav-icon">💡</span>
+            <span class="nav-label">Active Recall</span>
+          </div>
+          <div class="nav-item" data-section="mind-maps">
+            <span class="nav-icon">🗺️</span>
+            <span class="nav-label">Mind Maps</span>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Tools</div>
+          <div class="nav-item" data-section="notes">
+            <span class="nav-icon">📝</span>
+            <span class="nav-label">Notes</span>
+          </div>
+          <div class="nav-item" data-section="flashcards">
+            <span class="nav-icon">🎴</span>
+            <span class="nav-label">Flashcards</span>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Progress</div>
+          <div class="nav-item" data-section="progress">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Dashboard</span>
+          </div>
+          <div class="nav-item" data-section="challenges">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-label">Challenges</span>
+          </div>
+          <div class="nav-item" data-section="achievements">
+            <span class="nav-icon">🏆</span>
+            <span class="nav-label">Achievements</span>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-container">
+      <!-- Top Navigation Bar -->
+      <nav class="top-navbar glass-card">
+        <div class="navbar-left">
+          <button class="menu-toggle mobile-only" onclick="toggleSidebar()">
+            <span>☰</span>
+          </button>
+          <div class="navbar-title">
+            <h2 id="page-title">Dashboard</h2>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <div class="user-stats">
+            <div class="stat-item">
+              <span class="stat-icon">⭐</span>
+              <span id="level-count" class="stat-value">Lvl 1</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-icon">🎯</span>
+              <span id="xp-count" class="stat-value">0 XP</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-icon">🔥</span>
+              <span id="streak-count" class="stat-value">0</span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Dynamic Content Area -->
+      <div id="main-content" class="content-area">
+        <!-- Content will be loaded here dynamically -->
+      </div>
+    </main>
+
+    <!-- Music Player (Bottom) -->
+    <div class="music-player glass-card">
+      <audio id="audio-player"></audio>
+      
+      <div class="player-left">
+        <img id="player-cover" class="player-cover" src="https://via.placeholder.com/60" alt="Album Cover">
+        <div class="player-info">
+          <div id="player-title" class="player-title">No song playing</div>
+          <div id="player-artist" class="player-artist">Select a playlist</div>
+        </div>
+      </div>
+
+      <div class="player-center">
+        <div class="player-controls">
+          <button class="control-btn" id="prev-btn" onclick="musicPlayer?.previous()">
+            <span>⏮️</span>
+          </button>
+          <button class="control-btn control-btn-main" id="play-btn" onclick="musicPlayer?.togglePlay()">
+            <span id="play-icon">▶️</span>
+          </button>
+          <button class="control-btn" id="next-btn" onclick="musicPlayer?.next()">
+            <span>⏭️</span>
+          </button>
+        </div>
+        <div class="player-progress">
+          <span id="current-time" class="time-label">0:00</span>
+          <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+            <input type="range" id="progress-slider" class="progress-slider" min="0" max="100" value="0">
+          </div>
+          <span id="duration-time" class="time-label">0:00</span>
+        </div>
+      </div>
+
+      <div class="player-right">
+        <button class="control-btn" id="shuffle-btn" onclick="musicPlayer?.toggleShuffle()">
+          <span>🔀</span>
+        </button>
+        <button class="control-btn" id="repeat-btn" onclick="musicPlayer?.toggleRepeat()">
+          <span>🔁</span>
+        </button>
+        <div class="volume-control">
+          <span id="volume-icon" class="volume-icon">🔊</span>
+          <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="70">
+        </div>
+      </div>
+    </div>
+
+    <!-- Theme Selector Modal -->
+    <div id="theme-modal" class="modal" style="display: none;">
+      <div class="modal-content glass-card">
+        <div class="modal-header">
+          <h2>Choose Your Theme</h2>
+          <button class="modal-close" onclick="closeThemeSelector()">✕</button>
+        </div>
+        <div id="theme-grid" class="theme-grid">
+          <!-- Themes will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Load All Scripts in Correct Order -->
+  <script>
+    console.log('🌊 Starting PCM × Tech Ocean...');
+    
+    function updateLoadingStatus(message, progress) {
+      const statusEl = document.getElementById('loading-status');
+      const progressEl = document.getElementById('loading-progress');
+      
+      if (statusEl) statusEl.textContent = message;
+      if (progressEl) progressEl.style.width = progress + '%';
+      
+      console.log(`[${progress}%] ${message}`);
+    }
+    
+    updateLoadingStatus('Loading configuration...', 10);
+  </script>
+  
+  <script src="config.js"></script>
+  <script>updateLoadingStatus('✅ Configuration loaded', 20);</script>
+  
+  <script src="themes.js"></script>
+  <script>updateLoadingStatus('✅ Themes loaded', 30);</script>
+  
+  <script src="music-library.js"></script>
+  <script>updateLoadingStatus('✅ Music library loaded', 40);</script>
+  
+  <script src="game-levels.js"></script>
+  <script>updateLoadingStatus('✅ Game levels loaded', 50);</script>
+  
+  <script src="deep-learning.js"></script>
+  <script>updateLoadingStatus('✅ Deep learning techniques loaded', 60);</script>
+  
+  <script src="music-player.js"></script>
+  <script>updateLoadingStatus('✅ Music player initialized', 70);</script>
+  
+  <script src="game-engine.js"></script>
+  <script>updateLoadingStatus('✅ Game engine initialized', 80);</script>
+  
+  <script src="learning-tools.js"></script>
+  <script>updateLoadingStatus('✅ Learning tools initialized', 90);</script>
+  
+  <script src="app-fixed.js"></script>
+  <script>updateLoadingStatus('✅ App ready!', 100);</script>
+
+</body>
+</html>
