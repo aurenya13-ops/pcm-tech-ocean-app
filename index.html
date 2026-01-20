@@ -294,7 +294,33 @@
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- Scripts - PROPER ORDER IS CRITICAL -->
+  <script>
+    // Error handler
+    window.addEventListener('error', function(e) {
+      console.error('Global Error:', e.message, e.filename, e.lineno);
+    });
+    
+    // Check if scripts loaded
+    window.addEventListener('load', function() {
+      console.log('✅ Page fully loaded');
+      
+      // Verify critical objects exist
+      setTimeout(() => {
+        if (typeof APP_CONFIG === 'undefined') {
+          console.error('❌ APP_CONFIG not loaded!');
+          document.body.innerHTML = '<div style="color: white; padding: 50px; text-align: center;"><h1>Error: Configuration not loaded</h1><p>Please refresh the page</p></div>';
+        }
+        if (typeof MUSIC_LIBRARY === 'undefined') {
+          console.error('❌ MUSIC_LIBRARY not loaded!');
+        }
+        if (typeof GAME_LEVELS === 'undefined') {
+          console.error('❌ GAME_LEVELS not loaded!');
+        }
+      }, 100);
+    });
+  </script>
+  
   <script src="config.js"></script>
   <script src="themes.js"></script>
   <script src="music-library.js"></script>
