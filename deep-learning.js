@@ -48,6 +48,14 @@ const DEEP_LEARNING = {
   }
 };
 
+// Export as array for compatibility with app.js
+const DEEP_LEARNING_TECHNIQUES = [
+  DEEP_LEARNING.feynman,
+  DEEP_LEARNING.spacedRepetition,
+  DEEP_LEARNING.activeRecall,
+  DEEP_LEARNING.mindMaps
+];
+
 console.log('🧠 Deep Learning Tools Loaded!');
 console.log('✅ Feynman Technique');
 console.log('✅ Spaced Repetition (SM-2)');
