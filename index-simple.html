@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCM × Tech Ocean</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Simple Loading -->
+  <div id="loading-screen" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    color: white;
+  ">
+    <div style="font-size: 64px; margin-bottom: 20px;">🌊</div>
+    <div style="font-size: 24px; font-weight: 600; margin-bottom: 10px;">PCM × Tech Ocean</div>
+    <div style="font-size: 14px; color: #94a3b8; margin-bottom: 40px;">Loading...</div>
+    <div id="loading-status" style="font-size: 12px; color: #64748b;"></div>
+  </div>
+
+  <!-- Main App (Hidden Initially) -->
+  <div id="app" style="display: none;">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">🌊</span>
+          <span class="logo-text">PCM Ocean</span>
+        </div>
+      </div>
+
+      <!-- Theme Display -->
+      <div class="theme-display glass-card">
+        <div id="current-theme-preview" class="theme-preview"></div>
+        <div class="theme-info">
+          <div id="current-theme-name" class="theme-name">Ocean Depths</div>
+          <div id="current-theme-type" class="theme-type">calm</div>
+        </div>
+        <div class="theme-timer-container">
+          <div class="timer-label">Next theme in:</div>
+          <div id="theme-timer" class="theme-timer">47:59:59</div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="nav-menu">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <div class="nav-item active" data-section="dashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Dashboard</span>
+          </div>
+          <div class="nav-item" data-section="game-levels">
+            <span class="nav-icon">🎮</span>
+            <span class="nav-label">Game Levels</span>
+          </div>
+          <div class="nav-item" data-section="music-ocean">
+            <span class="nav-icon">🎵</span>
+            <span class="nav-label">Music Ocean</span>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-container">
+      <nav class="top-navbar glass-card">
+        <div class="navbar-title">
+          <h2 id="page-title">Dashboard</h2>
+        </div>
+      </nav>
+
+      <div id="main-content" class="content-area">
+        <h1>Welcome to PCM × Tech Ocean! 🌊</h1>
+        <p>Your learning journey starts here.</p>
+      </div>
+    </main>
+
+    <!-- Music Player -->
+    <div class="music-player glass-card">
+      <audio id="audio-player"></audio>
+      <div class="player-left">
+        <div class="player-info">
+          <div id="player-title" class="player-title">No song playing</div>
+        </div>
+      </div>
+      <div class="player-center">
+        <div class="player-controls">
+          <button class="control-btn control-btn-main" id="play-btn">
+            <span id="play-icon">▶️</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    console.log('🌊 Starting app...');
+    
+    function updateStatus(msg) {
+      const el = document.getElementById('loading-status');
+      if (el) el.textContent = msg;
+      console.log(msg);
+    }
+    
+    updateStatus('Loading scripts...');
+  </script>
+  
+  <script src="config.js"></script>
+  <script>updateStatus('✅ Config loaded');</script>
+  
+  <script src="themes.js"></script>
+  <script>updateStatus('✅ Themes loaded');</script>
+  
+  <script src="music-library.js"></script>
+  <script>updateStatus('✅ Music library loaded');</script>
+  
+  <script src="game-levels.js"></script>
+  <script>updateStatus('✅ Game levels loaded');</script>
+  
+  <script src="deep-learning.js"></script>
+  <script>updateStatus('✅ Deep learning loaded');</script>
+  
+  <script src="music-player.js"></script>
+  <script>updateStatus('✅ Music player loaded');</script>
+  
+  <script src="game-engine.js"></script>
+  <script>updateStatus('✅ Game engine loaded');</script>
+  
+  <script src="learning-tools.js"></script>
+  <script>updateStatus('✅ Learning tools loaded');</script>
+  
+  <script>
+    updateStatus('Initializing app...');
+    
+    // Simple initialization
+    setTimeout(() => {
+      try {
+        console.log('🎨 Creating ThemeManager...');
+        window.themeManager = new ThemeManager();
+        
+        console.log('🎵 Creating MusicPlayer...');
+        window.musicPlayer = new MusicPlayer();
+        
+        console.log('🎮 Creating GameEngine...');
+        window.gameEngine = new GameEngine();
+        
+        console.log('🧠 Creating LearningTools...');
+        window.learningTools = new LearningTools();
+        
+        console.log('✅ All systems initialized!');
+        
+        // Hide loading, show app
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        
+        console.log('🚀 App ready!');
+      } catch (error) {
+        console.error('❌ Initialization error:', error);
+        updateStatus('❌ Error: ' + error.message);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
