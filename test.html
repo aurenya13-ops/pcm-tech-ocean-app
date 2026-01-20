@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Test</title>
+  <style>
+    body {
+      background: #0a0e27;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      background: #1a2f45;
+    }
+    .success { border-left: 4px solid #00ff00; }
+    .error { border-left: 4px solid #ff0000; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Simple Test</h1>
+  <div id="results"></div>
+  
+  <script>
+    const results = document.getElementById('results');
+    
+    function log(msg, type = 'success') {
+      const div = document.createElement('div');
+      div.className = `status ${type}`;
+      div.textContent = msg;
+      results.appendChild(div);
+      console.log(msg);
+    }
+    
+    log('✅ HTML loaded');
+    
+    // Test 1: Load config
+    const script1 = document.createElement('script');
+    script1.src = 'config.js';
+    script1.onload = () => {
+      log('✅ Config loaded');
+      if (typeof APP_CONFIG !== 'undefined') {
+        log(`✅ APP_CONFIG exists: ${APP_CONFIG.name}`);
+      } else {
+        log('❌ APP_CONFIG not found', 'error');
+      }
+      
+      // Test 2: Load themes
+      const script2 = document.createElement('script');
+      script2.src = 'themes.js';
+      script2.onload = () => {
+        log('✅ Themes loaded');
+        if (typeof THEMES !== 'undefined') {
+          log(`✅ THEMES exists: ${THEMES.length} themes`);
+        } else {
+          log('❌ THEMES not found', 'error');
+        }
+        
+        if (typeof ThemeManager !== 'undefined') {
+          log('✅ ThemeManager class exists');
+          
+          // Try to create instance
+          try {
+            const tm = new ThemeManager();
+            log('✅ ThemeManager instance created!');
+          } catch (e) {
+            log(`❌ ThemeManager error: ${e.message}`, 'error');
+          }
+        } else {
+          log('❌ ThemeManager not found', 'error');
+        }
+      };
+      script2.onerror = () => log('❌ Failed to load themes.js', 'error');
+      document.head.appendChild(script2);
+    };
+    script1.onerror = () => log('❌ Failed to load config.js', 'error');
+    document.head.appendChild(script1);
+  </script>
+</body>
+</html>
