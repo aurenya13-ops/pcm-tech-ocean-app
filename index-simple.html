@@ -144,36 +144,7 @@
   <script src="learning-tools.js"></script>
   <script>updateStatus('✅ Learning tools loaded');</script>
   
-  <script>
-    updateStatus('Initializing app...');
-    
-    // Simple initialization
-    setTimeout(() => {
-      try {
-        console.log('🎨 Creating ThemeManager...');
-        window.themeManager = new ThemeManager();
-        
-        console.log('🎵 Creating MusicPlayer...');
-        window.musicPlayer = new MusicPlayer();
-        
-        console.log('🎮 Creating GameEngine...');
-        window.gameEngine = new GameEngine();
-        
-        console.log('🧠 Creating LearningTools...');
-        window.learningTools = new LearningTools();
-        
-        console.log('✅ All systems initialized!');
-        
-        // Hide loading, show app
-        document.getElementById('loading-screen').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        
-        console.log('🚀 App ready!');
-      } catch (error) {
-        console.error('❌ Initialization error:', error);
-        updateStatus('❌ Error: ' + error.message);
-      }
-    }, 1000);
-  </script>
+  <script src="app-fixed.js"></script>
+  <script>updateStatus('✅ App initialized!');</script>
 </body>
 </html>
