@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug - PCM Ocean</title>
+  <style>
+    body {
+      background: #0a0e27;
+      color: white;
+      font-family: 'Courier New', monospace;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .success {
+      background: #00ff0033;
+      border-left: 4px solid #00ff00;
+    }
+    .error {
+      background: #ff000033;
+      border-left: 4px solid #ff0000;
+    }
+    .info {
+      background: #0099ff33;
+      border-left: 4px solid #0099ff;
+    }
+    h1 {
+      color: #06ffa5;
+    }
+    h2 {
+      color: #667eea;
+      margin-top: 30px;
+    }
+    pre {
+      background: #1a1f3a;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 PCM × Tech Ocean - Debug Page</h1>
+  <p>This page will test all dependencies and show exactly what's working and what's not.</p>
+  
+  <div id="results"></div>
+  
+  <h2>📋 Console Logs</h2>
+  <pre id="console-logs"></pre>
+  
+  <script>
+    const results = document.getElementById('results');
+    const consoleLogs = document.getElementById('console-logs');
+    let logs = [];
+    
+    // Capture console logs
+    const originalLog = console.log;
+    const originalError = console.error;
+    
+    console.log = function(...args) {
+      logs.push('[LOG] ' + args.join(' '));
+      updateConsoleLogs();
+      originalLog.apply(console, args);
+    };
+    
+    console.error = function(...args) {
+      logs.push('[ERROR] ' + args.join(' '));
+      updateConsoleLogs();
+      originalError.apply(console, args);
+    };
+    
+    function updateConsoleLogs() {
+      consoleLogs.textContent = logs.join('\n');
+    }
+    
+    function addResult(message, type = 'info') {
+      const div = document.createElement('div');
+      div.className = `status ${type}`;
+      div.innerHTML = message;
+      results.appendChild(div);
+    }
+    
+    // Test 1: Basic HTML Elements
+    addResult('<h3>Test 1: HTML Elements</h3>', 'info');
+    
+    const elements = [
+      'loading-screen',
+      'app',
+      'sidebar',
+      'main-content',
+      'audio-player',
+      'theme-modal'
+    ];
+    
+    elements.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        addResult(`✅ Element found: #${id}`, 'success');
+      } else {
+        addResult(`❌ Element missing: #${id}`, 'error');
+      }
+    });
+  </script>
+  
+  <!-- Load scripts in order -->
+  <script src="config.js"></script>
+  <script>
+    // Test 2: Config
+    addResult('<h3>Test 2: Configuration</h3>', 'info');
+    
+    if (typeof APP_CONFIG !== 'undefined') {
+      addResult(`✅ APP_CONFIG loaded: ${APP_CONFIG.name} v${APP_CONFIG.version}`, 'success');
+      addResult(`&nbsp;&nbsp;&nbsp;Features: ${Object.keys(APP_CONFIG.features).length} defined`, 'success');
+    } else {
+      addResult('❌ APP_CONFIG not loaded!', 'error');
+    }
+    
+    if (typeof Utils !== 'undefined') {
+      addResult('✅ Utils object loaded', 'success');
+      addResult(`&nbsp;&nbsp;&nbsp;formatTime test: ${Utils.formatTime(125)} (should be 2:05)`, 'success');
+    } else {
+      addResult('❌ Utils object not loaded!', 'error');
+    }
+  </script>
+  
+  <script src="themes.js"></script>
+  <script>
+    // Test 3: Themes
+    addResult('<h3>Test 3: Themes</h3>', 'info');
+    
+    if (typeof THEMES !== 'undefined') {
+      addResult(`✅ THEMES loaded: ${THEMES.length} themes available`, 'success');
+      addResult(`&nbsp;&nbsp;&nbsp;First theme: ${THEMES[0].name}`, 'success');
+    } else {
+      addResult('❌ THEMES not loaded!', 'error');
+    }
+    
+    if (typeof ThemeManager !== 'undefined') {
+      addResult('✅ ThemeManager class available', 'success');
+    } else {
+      addResult('❌ ThemeManager class not available!', 'error');
+    }
+  </script>
+  
+  <script src="music-library.js"></script>
+  <script>
+    // Test 4: Music Library
+    addResult('<h3>Test 4: Music Library</h3>', 'info');
+    
+    if (typeof MUSIC_LIBRARY !== 'undefined') {
+      const totalSongs = Object.values(MUSIC_LIBRARY.playlists).reduce((sum, p) => sum + p.songs.length, 0);
+      addResult(`✅ MUSIC_LIBRARY loaded: ${Object.keys(MUSIC_LIBRARY.playlists).length} playlists`, 'success');
+      addResult(`&nbsp;&nbsp;&nbsp;Total songs: ${totalSongs}`, 'success');
+    } else {
+      addResult('❌ MUSIC_LIBRARY not loaded!', 'error');
+    }
+  </script>
+  
+  <script src="game-levels.js"></script>
+  <script>
+    // Test 5: Game Levels
+    addResult('<h3>Test 5: Game Levels</h3>', 'info');
+    
+    if (typeof GAME_LEVELS !== 'undefined') {
+      addResult(`✅ GAME_LEVELS loaded`, 'success');
+      if (GAME_LEVELS.class11) {
+        addResult(`&nbsp;&nbsp;&nbsp;Class 11: ${GAME_LEVELS.class11.totalLevels} levels`, 'success');
+      }
+      if (GAME_LEVELS.class12) {
+        addResult(`&nbsp;&nbsp;&nbsp;Class 12: ${GAME_LEVELS.class12.totalLevels} levels`, 'success');
+      }
+    } else {
+      addResult('❌ GAME_LEVELS not loaded!', 'error');
+    }
+  </script>
+  
+  <script src="deep-learning.js"></script>
+  <script>
+    // Test 6: Deep Learning
+    addResult('<h3>Test 6: Deep Learning</h3>', 'info');
+    
+    if (typeof DEEP_LEARNING_TECHNIQUES !== 'undefined') {
+      addResult(`✅ DEEP_LEARNING_TECHNIQUES loaded: ${DEEP_LEARNING_TECHNIQUES.length} techniques`, 'success');
+    } else {
+      addResult('❌ DEEP_LEARNING_TECHNIQUES not loaded!', 'error');
+    }
+  </script>
+  
+  <script src="music-player.js"></script>
+  <script>
+    // Test 7: Music Player
+    addResult('<h3>Test 7: Music Player</h3>', 'info');
+    
+    if (typeof MusicPlayer !== 'undefined') {
+      addResult('✅ MusicPlayer class available', 'success');
+    } else {
+      addResult('❌ MusicPlayer class not available!', 'error');
+    }
+  </script>
+  
+  <script src="game-engine.js"></script>
+  <script>
+    // Test 8: Game Engine
+    addResult('<h3>Test 8: Game Engine</h3>', 'info');
+    
+    if (typeof GameEngine !== 'undefined') {
+      addResult('✅ GameEngine class available', 'success');
+    } else {
+      addResult('❌ GameEngine class not available!', 'error');
+    }
+  </script>
+  
+  <script src="learning-tools.js"></script>
+  <script>
+    // Test 9: Learning Tools
+    addResult('<h3>Test 9: Learning Tools</h3>', 'info');
+    
+    if (typeof LearningTools !== 'undefined') {
+      addResult('✅ LearningTools class available', 'success');
+    } else {
+      addResult('❌ LearningTools class not available!', 'error');
+    }
+  </script>
+  
+  <script src="app.js"></script>
+  <script>
+    // Test 10: Main App
+    addResult('<h3>Test 10: Main App</h3>', 'info');
+    
+    if (typeof showSection !== 'undefined') {
+      addResult('✅ Main app functions available', 'success');
+    } else {
+      addResult('❌ Main app functions not available!', 'error');
+    }
+    
+    // Final Summary
+    setTimeout(() => {
+      addResult('<h3>🎯 Summary</h3>', 'info');
+      const successCount = document.querySelectorAll('.success').length;
+      const errorCount = document.querySelectorAll('.error').length;
+      
+      if (errorCount === 0) {
+        addResult(`✅ ALL TESTS PASSED! (${successCount} checks)`, 'success');
+        addResult('The app should be working. If index.html shows blank, check browser console for runtime errors.', 'info');
+      } else {
+        addResult(`⚠️ ${errorCount} ERRORS FOUND! ${successCount} checks passed.`, 'error');
+        addResult('Fix the errors above and reload.', 'info');
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
