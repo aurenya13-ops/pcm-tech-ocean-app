@@ -29,7 +29,7 @@ class GameEngine {
       this.updateStreak();
     }
     
-    // Update UI
+    // Update UI (if elements exist)
     this.updateStatsDisplay();
     
     console.log('🎮 Game Engine Initialized');
@@ -98,47 +98,42 @@ class GameEngine {
       return;
     }
     
-    // Find level
-    const level = this.findLevel(levelId);
-    if (!level) return;
+    // Find level data
+    const levelData = this.findLevel(levelId);
+    if (!levelData) {
+      console.error('Level not found:', levelId);
+      return;
+    }
     
-    // Add to completed
+    // Mark as completed
     this.userProgress.completedLevels.push(levelId);
     
-    // Calculate XP
-    let xp = level.xp;
+    // Award XP
+    const xpEarned = levelData.xp;
+    this.addXP(xpEarned, `Completed ${levelData.title}`);
     
-    // Bonus for perfect score
+    // Update stats
+    this.userProgress.stats.totalTime += timeSpent;
+    this.userProgress.stats.problemsSolved++;
+    
     if (score === 100) {
-      xp += APP_CONFIG.xp.bonusPerfect;
       this.userProgress.stats.perfectScores++;
     }
     
-    // Bonus for streak
-    if (this.userProgress.streak > 0) {
-      xp += this.userProgress.streak * 10;
-    }
-    
-    // Add XP
-    this.addXP(xp, `Completed: ${level.title}`);
-    
-    // Update stats
-    this.userProgress.stats.problemsSolved++;
-    this.userProgress.stats.totalTime += timeSpent;
-    
-    // Save
     this.saveProgress();
     
-    // Check achievements
-    this.checkAchievements();
-    
-    console.log(`✅ Level ${levelId} completed! Score: ${score}%, Time: ${timeSpent}s`);
+    console.log(`✅ Level ${levelId} completed! Score: ${score}%`);
   }
   
   findLevel(levelId) {
-    for (const journey of Object.values(GAME_LEVELS)) {
-      const level = journey.levels.find(l => l.id === levelId);
-      if (level) return level;
+    // Search through all classes and subjects
+    for (const className in GAME_LEVELS) {
+      const classData = GAME_LEVELS[className];
+      for (const subject in classData.subjects) {
+        const subjectData = classData.subjects[subject];
+        const level = subjectData.levels.find(l => l.id === levelId);
+        if (level) return level;
+      }
     }
     return null;
   }
@@ -152,10 +147,10 @@ class GameEngine {
         condition: () => this.userProgress.completedLevels.length >= 1
       },
       {
-        id: 'level_10',
-        name: 'Getting Started',
-        description: 'Reach Level 10',
-        condition: () => this.userProgress.level >= 10
+        id: 'level_5',
+        name: 'Rising Star',
+        description: 'Reach Level 5',
+        condition: () => this.userProgress.level >= 5
       },
       {
         id: 'streak_7',
@@ -168,12 +163,6 @@ class GameEngine {
         name: 'Perfectionist',
         description: 'Get 10 perfect scores',
         condition: () => this.userProgress.stats.perfectScores >= 10
-      },
-      {
-        id: 'complete_50',
-        name: 'Half Century',
-        description: 'Complete 50 levels',
-        condition: () => this.userProgress.completedLevels.length >= 50
       }
     ];
     
@@ -194,7 +183,7 @@ class GameEngine {
       'achievement'
     );
     
-    console.log(`🏆 Achievement: ${achievement.name}`);
+    console.log(`🏆 Achievement Unlocked: ${achievement.name}`);
   }
   
   showNotification(title, message, type = 'info') {
@@ -233,9 +222,14 @@ class GameEngine {
   }
   
   updateStatsDisplay() {
-    document.getElementById('xp-count').textContent = `${this.userProgress.xp} XP`;
-    document.getElementById('level-count').textContent = `Lvl ${this.userProgress.level}`;
-    document.getElementById('streak-count').textContent = this.userProgress.streak;
+    // Only update if elements exist
+    const xpEl = document.getElementById('xp-count');
+    const levelEl = document.getElementById('level-count');
+    const streakEl = document.getElementById('streak-count');
+    
+    if (xpEl) xpEl.textContent = `${this.userProgress.xp} XP`;
+    if (levelEl) levelEl.textContent = `Lvl ${this.userProgress.level}`;
+    if (streakEl) streakEl.textContent = this.userProgress.streak;
   }
   
   saveProgress() {
