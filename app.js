@@ -1,16 +1,29 @@
-// ==================== MAIN APP - 100% COMPLETE ====================
+// ==================== MAIN APP - FIXED & WORKING ====================
 
 // Global instances
 let gameEngine;
 let learningTools;
+let themeManager;
 
 // App initialization
 document.addEventListener('DOMContentLoaded', () => {
-  initializeApp();
+  console.log('🌊 DOM Content Loaded - Starting initialization...');
+  
+  try {
+    initializeApp();
+  } catch (error) {
+    console.error('❌ Initialization Error:', error);
+    showErrorScreen(error.message);
+  }
 });
 
 async function initializeApp() {
   console.log('🌊 Initializing PCM × Tech Ocean...');
+  
+  // Verify dependencies
+  if (!verifyDependencies()) {
+    throw new Error('Required dependencies not loaded');
+  }
   
   // Show loading screen
   showLoadingProgress();
@@ -28,33 +41,84 @@ async function initializeApp() {
   setTimeout(() => {
     hideLoadingScreen();
     showSection('dashboard');
-  }, 3000);
+  }, 2000);
   
   console.log('✅ App Initialized Successfully!');
 }
 
+function verifyDependencies() {
+  const required = ['APP_CONFIG', 'MUSIC_LIBRARY', 'GAME_LEVELS', 'DEEP_LEARNING_TECHNIQUES'];
+  const missing = [];
+  
+  required.forEach(dep => {
+    if (typeof window[dep] === 'undefined') {
+      missing.push(dep);
+      console.error(`❌ Missing: ${dep}`);
+    } else {
+      console.log(`✅ Loaded: ${dep}`);
+    }
+  });
+  
+  if (missing.length > 0) {
+    console.error('❌ Missing dependencies:', missing);
+    return false;
+  }
+  
+  return true;
+}
+
 async function initializeSystems() {
-  // Initialize Music Player
-  musicPlayer = new MusicPlayer();
-  await sleep(300);
-  
-  // Initialize Game Engine
-  gameEngine = new GameEngine();
-  await sleep(300);
-  
-  // Initialize Learning Tools
-  learningTools = new LearningTools();
-  await sleep(300);
-  
-  console.log('✅ All systems initialized');
+  try {
+    // Initialize Theme Manager
+    if (typeof ThemeManager !== 'undefined') {
+      themeManager = new ThemeManager();
+      console.log('✅ Theme Manager initialized');
+    } else {
+      console.warn('⚠️ ThemeManager not available');
+    }
+    await sleep(200);
+    
+    // Initialize Music Player
+    if (typeof MusicPlayer !== 'undefined') {
+      musicPlayer = new MusicPlayer();
+      console.log('✅ Music Player initialized');
+    } else {
+      console.warn('⚠️ MusicPlayer not available');
+    }
+    await sleep(200);
+    
+    // Initialize Game Engine
+    if (typeof GameEngine !== 'undefined') {
+      gameEngine = new GameEngine();
+      console.log('✅ Game Engine initialized');
+    } else {
+      console.warn('⚠️ GameEngine not available');
+    }
+    await sleep(200);
+    
+    // Initialize Learning Tools
+    if (typeof LearningTools !== 'undefined') {
+      learningTools = new LearningTools();
+      console.log('✅ Learning Tools initialized');
+    } else {
+      console.warn('⚠️ LearningTools not available');
+    }
+    await sleep(200);
+    
+    console.log('✅ All systems initialized');
+  } catch (error) {
+    console.error('❌ System initialization error:', error);
+  }
 }
 
 function showLoadingProgress() {
   const progress = document.getElementById('loading-progress');
+  if (!progress) return;
+  
   let width = 0;
   const interval = setInterval(() => {
-    width += 2;
-    if (progress) progress.style.width = width + '%';
+    width += 3;
+    progress.style.width = width + '%';
     if (width >= 100) clearInterval(interval);
   }, 30);
 }
@@ -63,8 +127,39 @@ function hideLoadingScreen() {
   const loadingScreen = document.getElementById('loading-screen');
   const app = document.getElementById('app');
   
-  loadingScreen.style.display = 'none';
-  app.style.display = 'block';
+  if (loadingScreen) loadingScreen.style.display = 'none';
+  if (app) app.style.display = 'block';
+}
+
+function showErrorScreen(message) {
+  document.body.innerHTML = `
+    <div style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      color: white;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      padding: 20px;
+    ">
+      <div>
+        <h1 style="font-size: 48px; margin-bottom: 20px;">⚠️ Error</h1>
+        <p style="font-size: 18px; color: #94a3b8; margin-bottom: 30px;">${message}</p>
+        <button onclick="location.reload()" style="
+          padding: 12px 30px;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          border: none;
+          border-radius: 8px;
+          color: white;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+        ">Reload Page</button>
+      </div>
+    </div>
+  `;
 }
 
 function sleep(ms) {
@@ -84,6 +179,12 @@ function setupNavigation() {
         // Update active state
         navItems.forEach(nav => nav.classList.remove('active'));
         item.classList.add('active');
+        
+        // Close sidebar on mobile
+        if (window.innerWidth <= 1024) {
+          const sidebar = document.getElementById('sidebar');
+          if (sidebar) sidebar.classList.remove('open');
+        }
       }
     });
   });
@@ -91,50 +192,63 @@ function setupNavigation() {
 
 function showSection(sectionName) {
   const content = document.getElementById('main-content');
+  if (!content) return;
+  
+  console.log('📄 Loading section:', sectionName);
   
   // Render appropriate section
-  switch(sectionName) {
-    case 'dashboard':
-      renderDashboard(content);
-      break;
-    case 'game-levels':
-      renderGameLevels(content);
-      break;
-    case 'music-ocean':
-      renderMusicOcean(content);
-      break;
-    case 'pomodoro':
-      renderPomodoro(content);
-      break;
-    case 'feynman':
-      renderFeynman(content);
-      break;
-    case 'spaced-repetition':
-      renderSpacedRepetition(content);
-      break;
-    case 'active-recall':
-      renderActiveRecall(content);
-      break;
-    case 'mind-maps':
-      renderMindMaps(content);
-      break;
-    case 'notes':
-      renderNotes(content);
-      break;
-    case 'flashcards':
-      renderFlashcards(content);
-      break;
-    case 'progress':
-      renderProgress(content);
-      break;
-    case 'challenges':
-      renderChallenges(content);
-      break;
-    case 'achievements':
-      renderAchievements(content);
-      break;
-    default:
-      renderComingSoon(content, sectionName);
+  try {
+    switch(sectionName) {
+      case 'dashboard':
+        renderDashboard(content);
+        break;
+      case 'game-levels':
+        renderGameLevels(content);
+        break;
+      case 'music-ocean':
+        renderMusicOcean(content);
+        break;
+      case 'pomodoro':
+        renderPomodoro(content);
+        break;
+      case 'feynman':
+        renderFeynman(content);
+        break;
+      case 'spaced-repetition':
+        renderSpacedRepetition(content);
+        break;
+      case 'active-recall':
+        renderActiveRecall(content);
+        break;
+      case 'mind-maps':
+        renderMindMaps(content);
+        break;
+      case 'notes':
+        renderNotes(content);
+        break;
+      case 'flashcards':
+        renderFlashcards(content);
+        break;
+      case 'progress':
+        renderProgress(content);
+        break;
+      case 'challenges':
+        renderChallenges(content);
+        break;
+      case 'achievements':
+        renderAchievements(content);
+        break;
+      default:
+        renderComingSoon(content, sectionName);
+    }
+  } catch (error) {
+    console.error('❌ Section render error:', error);
+    content.innerHTML = `
+      <div style="text-align: center; padding: 50px;">
+        <h2 style="color: #ff4444;">Error loading section</h2>
+        <p style="color: #94a3b8;">${error.message}</p>
+      </div>
+    `;
   }
   
   // Scroll to top
@@ -143,8 +257,14 @@ function showSection(sectionName) {
 
 // ===== DASHBOARD =====
 function renderDashboard(container) {
-  const progress = gameEngine.getProgress();
-  const dueCards = learningTools.getDueFlashcards();
+  const progress = gameEngine ? gameEngine.getProgress() : {
+    level: 1,
+    xp: 0,
+    streak: 0,
+    completedLevels: []
+  };
+  
+  const dueCards = learningTools ? learningTools.getDueFlashcards() : [];
   
   container.innerHTML = `
     <div class="dashboard">
@@ -320,6 +440,11 @@ function renderDashboard(container) {
 
 // ===== GAME LEVELS =====
 function renderGameLevels(container) {
+  if (!GAME_LEVELS) {
+    container.innerHTML = '<p style="color: white; padding: 50px; text-align: center;">Game levels not loaded</p>';
+    return;
+  }
+  
   container.innerHTML = `
     <div class="game-levels-section">
       <h1 class="section-title text-gradient">🎮 Game Levels</h1>
@@ -398,49 +523,59 @@ function renderGameLevels(container) {
 }
 
 function loadJourney(journeyKey) {
+  if (!GAME_LEVELS || !GAME_LEVELS[journeyKey]) {
+    console.error('Journey not found:', journeyKey);
+    return;
+  }
+  
   const journey = GAME_LEVELS[journeyKey];
   const container = document.getElementById('levels-container');
+  if (!container) return;
   
   // Update active button
   document.querySelectorAll('.journey-btn').forEach(btn => btn.classList.remove('active'));
-  event?.target?.classList.add('active');
+  if (event && event.target) event.target.classList.add('active');
   
-  container.innerHTML = journey.levels.map(level => {
-    const isCompleted = gameEngine.isLevelCompleted(level.id);
-    
-    return `
-      <div class="level-card glass-card ${isCompleted ? 'completed' : ''}" onclick="openLevel(${level.id})">
-        ${isCompleted ? '<div class="completed-badge">✓ Completed</div>' : ''}
-        
-        <div class="level-header">
-          <div class="level-number">${level.id}</div>
-          <div class="level-xp">+${level.xp} XP</div>
-        </div>
-        
-        <h3 class="level-title">${level.title}</h3>
-        
-        <div class="level-meta">
-          <span class="meta-tag">📚 ${level.subject}</span>
-          <span class="meta-tag">⚡ ${level.difficulty}</span>
-          ${level.chapter ? `<span class="meta-tag">📖 ${level.chapter}</span>` : ''}
-        </div>
-        
-        <div class="level-concepts">
-          <h4>Concepts:</h4>
-          <div class="concepts-list">
-            ${level.concepts.map(c => `<span class="concept-tag">${c}</span>`).join('')}
-          </div>
-        </div>
-        
-        <div class="tech-blend-badge">
-          💻 ${level.techBlend}
+  const isCompleted = (levelId) => gameEngine ? gameEngine.isLevelCompleted(levelId) : false;
+  
+  container.innerHTML = journey.levels.map(level => `
+    <div class="level-card glass-card ${isCompleted(level.id) ? 'completed' : ''}" onclick="openLevel(${level.id})">
+      ${isCompleted(level.id) ? '<div class="completed-badge">✓ Completed</div>' : ''}
+      
+      <div class="level-header">
+        <div class="level-number">${level.id}</div>
+        <div class="level-xp">+${level.xp} XP</div>
+      </div>
+      
+      <h3 class="level-title">${level.title}</h3>
+      
+      <div class="level-meta">
+        <span class="meta-tag">📚 ${level.subject}</span>
+        <span class="meta-tag">⚡ ${level.difficulty}</span>
+        ${level.chapter ? `<span class="meta-tag">📖 ${level.chapter}</span>` : ''}
+      </div>
+      
+      <div class="level-concepts">
+        <h4>Concepts:</h4>
+        <div class="concepts-list">
+          ${level.concepts.map(c => `<span class="concept-tag">${c}</span>`).join('')}
         </div>
       </div>
-    `;
-  }).join('');
+      
+      <div class="tech-blend-badge">
+        💻 ${level.techBlend}
+      </div>
+    </div>
+  `).join('');
   
-  // Add styles
+  addLevelCardStyles();
+}
+
+function addLevelCardStyles() {
+  if (document.getElementById('level-card-styles')) return;
+  
   const style = document.createElement('style');
+  style.id = 'level-card-styles';
   style.textContent = `
     .level-card {
       padding: 25px;
@@ -552,12 +687,18 @@ function loadJourney(journeyKey) {
 }
 
 function openLevel(levelId) {
-  alert(`Level ${levelId} will open with interactive challenges, code editor, and quizzes!\n\nThis feature is being built...`);
+  alert(`🎮 Level ${levelId}\n\nInteractive challenge interface coming soon!\n\nWill include:\n✅ Quiz questions\n✅ Code editor\n✅ Real-time feedback\n✅ XP rewards`);
 }
 
 // ===== MUSIC OCEAN =====
 function renderMusicOcean(container) {
+  if (!MUSIC_LIBRARY) {
+    container.innerHTML = '<p style="color: white; padding: 50px; text-align: center;">Music library not loaded</p>';
+    return;
+  }
+  
   const playlists = Object.entries(MUSIC_LIBRARY.playlists);
+  const currentPlaylist = musicPlayer ? musicPlayer.currentPlaylist : 'chill_vibes';
   
   container.innerHTML = `
     <div class="music-section">
@@ -566,7 +707,7 @@ function renderMusicOcean(container) {
       
       <div class="playlists-grid">
         ${playlists.map(([key, playlist]) => `
-          <div class="playlist-card glass-card ${key === musicPlayer.currentPlaylist ? 'active' : ''}" 
+          <div class="playlist-card glass-card ${key === currentPlaylist ? 'active' : ''}" 
                onclick="selectPlaylist('${key}')">
             <img src="${playlist.cover}" alt="${playlist.name}">
             <h3>${playlist.name}</h3>
@@ -632,24 +773,29 @@ function renderMusicOcean(container) {
 }
 
 function selectPlaylist(playlistKey) {
-  musicPlayer.loadPlaylist(playlistKey);
-  
-  // Update UI
-  document.querySelectorAll('.playlist-card').forEach(card => card.classList.remove('active'));
-  event?.target?.closest('.playlist-card')?.classList.add('active');
-  
-  renderSongsList();
+  if (musicPlayer) {
+    musicPlayer.loadPlaylist(playlistKey);
+    
+    // Update UI
+    document.querySelectorAll('.playlist-card').forEach(card => card.classList.remove('active'));
+    if (event && event.target) {
+      const card = event.target.closest('.playlist-card');
+      if (card) card.classList.add('active');
+    }
+    
+    renderSongsList();
+  }
 }
 
 function renderSongsList() {
   const container = document.getElementById('songs-list');
-  if (!container) return;
+  if (!container || !musicPlayer) return;
   
   const songs = musicPlayer.getQueue();
   const currentSong = musicPlayer.getCurrentSong();
   
   container.innerHTML = songs.map((song, index) => `
-    <div class="song-item glass-card ${currentSong?.title === song.title ? 'playing' : ''}" 
+    <div class="song-item glass-card ${currentSong && currentSong.title === song.title ? 'playing' : ''}" 
          onclick="playSongFromList(${index})">
       <img src="${song.cover}" alt="${song.title}">
       <div class="song-info-item">
@@ -660,8 +806,14 @@ function renderSongsList() {
     </div>
   `).join('');
   
-  // Add styles
+  addSongItemStyles();
+}
+
+function addSongItemStyles() {
+  if (document.getElementById('song-item-styles')) return;
+  
   const style = document.createElement('style');
+  style.id = 'song-item-styles';
   style.textContent = `
     .song-item {
       display: flex;
@@ -712,9 +864,11 @@ function renderSongsList() {
 }
 
 function playSongFromList(index) {
-  musicPlayer.loadSong(index);
-  musicPlayer.play();
-  renderSongsList();
+  if (musicPlayer) {
+    musicPlayer.loadSong(index);
+    musicPlayer.play();
+    renderSongsList();
+  }
 }
 
 // ===== OTHER SECTIONS (Placeholders) =====
@@ -799,7 +953,7 @@ function setupSidebarToggle() {
   const menuToggle = document.querySelector('.menu-toggle');
   const sidebar = document.getElementById('sidebar');
   
-  if (menuToggle) {
+  if (menuToggle && sidebar) {
     menuToggle.addEventListener('click', () => {
       sidebar.classList.toggle('open');
     });
@@ -808,13 +962,20 @@ function setupSidebarToggle() {
 
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('open');
+  if (sidebar) sidebar.classList.toggle('open');
 }
 
 // ===== THEME SELECTOR =====
 function showThemeSelector() {
+  if (!themeManager) {
+    alert('Theme manager not available');
+    return;
+  }
+  
   const modal = document.getElementById('theme-modal');
   const grid = document.getElementById('theme-grid');
+  
+  if (!modal || !grid) return;
   
   const themes = themeManager.getAllThemes();
   
@@ -829,8 +990,14 @@ function showThemeSelector() {
   
   modal.classList.add('active');
   
-  // Add styles
+  addThemeOptionStyles();
+}
+
+function addThemeOptionStyles() {
+  if (document.getElementById('theme-option-styles')) return;
+  
   const style = document.createElement('style');
+  style.id = 'theme-option-styles';
   style.textContent = `
     .theme-selector {
       max-width: 1000px;
@@ -881,13 +1048,16 @@ function showThemeSelector() {
 }
 
 function closeThemeSelector() {
-  document.getElementById('theme-modal').classList.remove('active');
+  const modal = document.getElementById('theme-modal');
+  if (modal) modal.classList.remove('active');
 }
 
 function selectTheme(index) {
-  themeManager.currentThemeIndex = index;
-  themeManager.applyTheme(index);
-  themeManager.saveThemeData();
+  if (themeManager) {
+    themeManager.currentThemeIndex = index;
+    themeManager.applyTheme(index);
+    themeManager.saveThemeData();
+  }
   closeThemeSelector();
 }
 
