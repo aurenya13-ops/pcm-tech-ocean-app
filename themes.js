@@ -52,11 +52,11 @@ const THEMES = [
       secondary: "#7b2cbf",
       accent: "#c77dff",
       bgMain: "#10002b",
-      bgCard: "rgba(30, 10, 50, 0.95)",
+      bgCard: "rgba(25, 0, 55, 0.95)",
       bgSidebar: "rgba(16, 0, 43, 0.98)"
     },
     background: "linear-gradient(135deg, #10002b 0%, #240046 100%)",
-    description: "Mystical purple for late-night study"
+    description: "Mysterious purple for night owls"
   },
   {
     name: "Arctic Frost",
@@ -66,14 +66,14 @@ const THEMES = [
       secondary: "#0096c7",
       accent: "#90e0ef",
       bgMain: "#03045e",
-      bgCard: "rgba(10, 20, 60, 0.95)",
+      bgCard: "rgba(10, 20, 100, 0.95)",
       bgSidebar: "rgba(3, 4, 94, 0.98)"
     },
     background: "linear-gradient(135deg, #03045e 0%, #023e8a 100%)",
-    description: "Cool arctic vibes for clarity"
+    description: "Cool arctic tones for clarity"
   },
-
-  // POWERFUL THEMES
+  
+  // POWERFUL AESTHETIC THEMES
   {
     name: "Neon Cyberpunk",
     type: "powerful",
@@ -81,167 +81,200 @@ const THEMES = [
       primary: "#ff006e",
       secondary: "#8338ec",
       accent: "#06ffa5",
-      bgMain: "#0a0e27",
-      bgCard: "rgba(15, 23, 42, 0.95)",
-      bgSidebar: "rgba(10, 14, 39, 0.98)"
+      bgMain: "#0d0221",
+      bgCard: "rgba(20, 5, 40, 0.95)",
+      bgSidebar: "rgba(13, 2, 33, 0.98)"
     },
-    background: "linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)",
-    description: "High-energy cyberpunk for intense focus"
+    background: "linear-gradient(135deg, #0d0221 0%, #1a0b3d 100%)",
+    description: "Cyberpunk energy for intense focus"
   },
   {
     name: "Fire Power",
     type: "powerful",
     colors: {
       primary: "#ff4500",
-      secondary: "#dc2f02",
-      accent: "#ffba08",
+      secondary: "#ff6b35",
+      accent: "#ffd60a",
       bgMain: "#1a0000",
-      bgCard: "rgba(40, 10, 10, 0.95)",
+      bgCard: "rgba(40, 10, 0, 0.95)",
       bgSidebar: "rgba(26, 0, 0, 0.98)"
     },
-    background: "linear-gradient(135deg, #1a0000 0%, #370617 100%)",
-    description: "Burning motivation and energy"
+    background: "linear-gradient(135deg, #1a0000 0%, #330000 100%)",
+    description: "Fiery passion for breakthrough moments"
   },
   {
     name: "Electric Storm",
     type: "powerful",
     colors: {
-      primary: "#7209b7",
-      secondary: "#560bad",
-      accent: "#f72585",
-      bgMain: "#0d0221",
-      bgCard: "rgba(25, 10, 45, 0.95)",
-      bgSidebar: "rgba(13, 2, 33, 0.98)"
+      primary: "#00d9ff",
+      secondary: "#0099cc",
+      accent: "#ffff00",
+      bgMain: "#001219",
+      bgCard: "rgba(0, 25, 40, 0.95)",
+      bgSidebar: "rgba(0, 18, 25, 0.98)"
     },
-    background: "linear-gradient(135deg, #0d0221 0%, #240046 100%)",
-    description: "Electrifying power for breakthroughs"
+    background: "linear-gradient(135deg, #001219 0%, #005f73 100%)",
+    description: "Electric energy for power sessions"
   },
   {
     name: "Golden Hour",
     type: "powerful",
     colors: {
-      primary: "#ffd60a",
-      secondary: "#faa307",
-      accent: "#ffee32",
-      bgMain: "#1a1200",
-      bgCard: "rgba(35, 25, 10, 0.95)",
-      bgSidebar: "rgba(26, 18, 0, 0.98)"
+      primary: "#f77f00",
+      secondary: "#d62828",
+      accent: "#fcbf49",
+      bgMain: "#1a0f00",
+      bgCard: "rgba(35, 20, 0, 0.95)",
+      bgSidebar: "rgba(26, 15, 0, 0.98)"
     },
-    background: "linear-gradient(135deg, #1a1200 0%, #3d2800 100%)",
-    description: "Golden energy for peak performance"
+    background: "linear-gradient(135deg, #1a0f00 0%, #3d2000 100%)",
+    description: "Golden power for peak performance"
   },
   {
     name: "Emerald Power",
     type: "powerful",
     colors: {
-      primary: "#06ffa5",
-      secondary: "#00d4aa",
-      accent: "#7df9ff",
-      bgMain: "#001a14",
-      bgCard: "rgba(10, 35, 28, 0.95)",
-      bgSidebar: "rgba(0, 26, 20, 0.98)"
+      primary: "#00ff88",
+      secondary: "#00cc6a",
+      accent: "#7fff00",
+      bgMain: "#001a0f",
+      bgCard: "rgba(0, 35, 20, 0.95)",
+      bgSidebar: "rgba(0, 26, 15, 0.98)"
     },
-    background: "linear-gradient(135deg, #001a14 0%, #003d2e 100%)",
-    description: "Emerald strength and growth"
+    background: "linear-gradient(135deg, #001a0f 0%, #003d1f 100%)",
+    description: "Emerald strength for champions"
   }
 ];
 
 class ThemeManager {
   constructor() {
     this.currentThemeIndex = 0;
-    this.themeChangeInterval = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
+    this.themeChangeInterval = 48 * 60 * 60 * 1000; // 48 hours
+    this.lastThemeChange = Date.now();
+    this.autoChangeTimer = null;
+    
     this.init();
   }
-
+  
   init() {
-    // Load saved theme or start fresh
-    const saved = localStorage.getItem('themeData');
+    // Load saved theme data
+    const saved = this.loadThemeData();
     if (saved) {
-      const data = JSON.parse(saved);
-      this.currentThemeIndex = data.index;
-      this.lastChangeTime = data.timestamp;
-      
-      // Check if 48 hours have passed
-      const timePassed = Date.now() - this.lastChangeTime;
-      if (timePassed >= this.themeChangeInterval) {
-        this.cycleTheme();
-      } else {
-        this.applyTheme(this.currentThemeIndex);
-        this.startTimer(this.themeChangeInterval - timePassed);
-      }
-    } else {
-      this.applyTheme(0);
-      this.saveThemeData();
-      this.startTimer(this.themeChangeInterval);
+      this.currentThemeIndex = saved.currentThemeIndex || 0;
+      this.lastThemeChange = saved.lastThemeChange || Date.now();
     }
+    
+    // Apply current theme
+    this.applyTheme(this.currentThemeIndex);
+    
+    // Start auto-change timer
+    this.startAutoChange();
+    
+    // Update countdown display
+    this.updateCountdown();
+    setInterval(() => this.updateCountdown(), 1000);
+    
+    console.log('🎨 Theme Manager Initialized');
+    console.log(`📊 Total Themes: ${THEMES.length}`);
+    console.log(`⏰ Auto-change: Every 48 hours`);
+    console.log(`🎯 Current: ${this.getCurrentTheme().name}`);
   }
-
+  
   applyTheme(index) {
+    if (index < 0 || index >= THEMES.length) return;
+    
     const theme = THEMES[index];
     const root = document.documentElement;
     
-    // Apply colors
-    Object.entries(theme.colors).forEach(([key, value]) => {
-      const cssVar = key.replace(/([A-Z])/g, '-$1').toLowerCase();
-      root.style.setProperty(`--${cssVar}`, value);
-    });
+    // Apply CSS variables
+    root.style.setProperty('--primary', theme.colors.primary);
+    root.style.setProperty('--secondary', theme.colors.secondary);
+    root.style.setProperty('--accent', theme.colors.accent);
+    root.style.setProperty('--bg-main', theme.colors.bgMain);
+    root.style.setProperty('--bg-card', theme.colors.bgCard);
+    root.style.setProperty('--bg-sidebar', theme.colors.bgSidebar);
+    root.style.setProperty('--bg-navbar', theme.colors.bgSidebar);
     
-    // Apply background
-    document.body.style.background = theme.background;
+    // Update sidebar theme display
+    const themePreview = document.getElementById('current-theme-preview');
+    const themeName = document.getElementById('current-theme-name');
+    const themeType = document.getElementById('current-theme-type');
     
-    console.log(`🎨 Theme Applied: ${theme.name} (${theme.type})`);
-    console.log(`📝 ${theme.description}`);
+    if (themePreview) themePreview.style.background = theme.background;
+    if (themeName) themeName.textContent = theme.name;
+    if (themeType) themeType.textContent = theme.type;
+    
+    console.log(`🎨 Applied theme: ${theme.name} (${theme.type})`);
   }
-
+  
   cycleTheme() {
     this.currentThemeIndex = (this.currentThemeIndex + 1) % THEMES.length;
+    this.lastThemeChange = Date.now();
     this.applyTheme(this.currentThemeIndex);
-    this.lastChangeTime = Date.now();
     this.saveThemeData();
-    this.startTimer(this.themeChangeInterval);
+    this.showThemeNotification(THEMES[this.currentThemeIndex]);
     
-    // Show notification
-    this.showThemeNotification();
+    console.log(`🔄 Theme cycled to: ${THEMES[this.currentThemeIndex].name}`);
   }
-
-  startTimer(duration) {
-    // Update countdown display
-    this.updateCountdown(duration);
+  
+  startAutoChange() {
+    // Clear existing timer
+    if (this.autoChangeTimer) {
+      clearInterval(this.autoChangeTimer);
+    }
     
-    // Set interval for countdown
-    if (this.countdownInterval) clearInterval(this.countdownInterval);
-    this.countdownInterval = setInterval(() => {
-      const remaining = this.themeChangeInterval - (Date.now() - this.lastChangeTime);
-      if (remaining <= 0) {
+    // Check every minute if it's time to change
+    this.autoChangeTimer = setInterval(() => {
+      const timeSinceLastChange = Date.now() - this.lastThemeChange;
+      
+      if (timeSinceLastChange >= this.themeChangeInterval) {
         this.cycleTheme();
-      } else {
-        this.updateCountdown(remaining);
       }
-    }, 1000);
+    }, 60000); // Check every minute
   }
-
-  updateCountdown(ms) {
-    const hours = Math.floor(ms / (1000 * 60 * 60));
-    const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+  
+  updateCountdown() {
+    const timeLeft = this.themeChangeInterval - (Date.now() - this.lastThemeChange);
     
-    const display = document.getElementById('theme-timer');
-    if (display) {
-      display.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    if (timeLeft <= 0) {
+      this.cycleTheme();
+      return;
+    }
+    
+    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+    
+    const timerElement = document.getElementById('theme-timer');
+    if (timerElement) {
+      timerElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
   }
-
+  
   saveThemeData() {
-    localStorage.setItem('themeData', JSON.stringify({
-      index: this.currentThemeIndex,
-      timestamp: this.lastChangeTime
-    }));
-  }
-
-  showThemeNotification() {
-    const theme = THEMES[this.currentThemeIndex];
+    const data = {
+      currentThemeIndex: this.currentThemeIndex,
+      lastThemeChange: this.lastThemeChange
+    };
     
-    // Create notification element
+    try {
+      localStorage.setItem('ocean_theme_data', JSON.stringify(data));
+    } catch (e) {
+      console.error('Failed to save theme data:', e);
+    }
+  }
+  
+  loadThemeData() {
+    try {
+      const data = localStorage.getItem('ocean_theme_data');
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      console.error('Failed to load theme data:', e);
+      return null;
+    }
+  }
+  
+  showThemeNotification(theme) {
     const notification = document.createElement('div');
     notification.style.cssText = `
       position: fixed;
@@ -280,12 +313,11 @@ class ThemeManager {
   }
 }
 
-// Initialize theme manager
-const themeManager = new ThemeManager();
-
 // Manual theme cycle function
 function cycleTheme() {
-  themeManager.cycleTheme();
+  if (window.themeManager) {
+    window.themeManager.cycleTheme();
+  }
 }
 
 // Add CSS animations
@@ -315,7 +347,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-console.log('🎨 Theme Manager Initialized');
-console.log(`📊 Total Themes: ${THEMES.length}`);
-console.log(`⏰ Auto-change: Every 48 hours`);
-console.log(`🎯 Current: ${themeManager.getCurrentTheme().name}`);
+console.log('🎨 Themes Module Loaded');
